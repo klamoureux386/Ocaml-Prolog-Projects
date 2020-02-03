@@ -1,0 +1,62 @@
+(*SDE1 CPSC 3520 Kyle Lamoureux*)
+
+open List;;
+
+(* Helper Function *)
+let rec helper_printSingleList = function (list) ->
+
+  if ((tl list) == [])
+    then (string_of_float((hd list)) ^ "\n")
+    else (string_of_float((hd list)) ^ " " ^ helper_printSingleList(tl list));;
+
+
+let rec helper_formattedList = function (listOfLists, formattedString) ->
+
+  if ((tl listOfLists) == [])
+    then (formattedString ^ helper_printSingleList((hd listOfLists)))
+    else (formattedString ^ helper_printSingleList((hd listOfLists)) ^ helper_formattedList (tl listOfLists, formattedString) )
+
+
+let rec printList = function (listOfLists) ->
+
+  print_string( helper_formattedList(listOfLists, "") )
+
+
+let rec theClass = function (avect) ->
+  if ((tl avect) == [])
+    then (hd avect)
+    else theClass((tl avect));;
+
+
+let rec distanceR2 = function (v1, v2) ->
+  if ((tl v1) == [] || (tl v2) == [])
+    then (0.)
+    else (((hd v1) -. (hd v2)) *. ((hd v1) -. (hd v2))) +. distanceR2((tl v1), (tl v2));;
+
+
+let rec distanceAllVectors2 = function (v, vset) ->
+  if ((tl vset) == [])
+    then [distanceR2(v, (hd vset))]
+    else distanceR2(v, (hd vset)) :: distanceAllVectors2(v, (tl vset));;
+
+
+(* Helper Function *)
+let rec helper_nnr1 = function (test, h, leastDistance, leastClass) ->
+
+  if ((tl h) == [])
+    then (
+      if(distanceR2(test, (hd h)) < leastDistance)
+	then(theClass((hd h)))
+	else(leastClass)
+	 )
+
+    else (
+      if(distanceR2(test, (hd h)) < leastDistance)
+	then(helper_nnr1(test, (tl h), distanceR2(test, (hd h)), theClass((hd h))))
+	else(helper_nnr1(test, (tl h), leastDistance, leastClass))
+	 )
+
+let nnr1 = function (test, h) ->
+  helper_nnr1(test, h, distanceR2(test, (hd h)), theClass((hd h)));;
+
+
